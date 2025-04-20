@@ -19,7 +19,7 @@ public class Main extends Application {
         
         // Initialize the start screen
         StartScreen startScreen = new StartScreen(this);
-        startScene = new Scene(startScreen, 800, 600);
+        startScene = new Scene(startScreen, GameController.getWidth(), GameController.getHeight());
         
         // Set the initial scene to the start screen
         primaryStage.setScene(startScene);
@@ -33,10 +33,14 @@ public class Main extends Application {
         
         // Initialize game screen
         GameScreen gameScreen = new GameScreen(gameController);
-        gameScene = new Scene(gameScreen, 800, 600);
+        gameScene = new Scene(gameScreen, GameController.getWidth(), GameController.getHeight());
         
         // Setup key handlers
         setupKeyHandlers(gameScene);
+        
+        // Set up cheat code listener
+        CheatCodeManager cheatManager = new CheatCodeManager();
+        cheatManager.setupCheatCodeListener(gameScene, gameController);
         
         // Switch to game scene
         primaryStage.setScene(gameScene);
@@ -57,13 +61,15 @@ public class Main extends Application {
                     gameController.moveCharacterDown();
                     break;
                 case SPACE:
-                    gameController.shootKiBlastRight();
+                	if(this.gameController.getCharacterType() == "white") {                		
+                		gameController.shootKiBlastRight();
+                	}
                     break;
                 case Z:
-                    gameController.shootSpecialKiBlastLeft(false); // Regular special attack
+                    gameController.shootKiBlastLeft(false); // Regular special attack
                     break;
                 case X:
-                    gameController.shootSpecialKiBlastLeft(true);  // Ultimate attack
+                    gameController.shootKiBlastLeft(true);  // Ultimate attack
                     break;
                 case P:
                     gameController.togglePause();

@@ -28,7 +28,7 @@ public class GameScreen extends BorderPane {
         this.gameController = gameController;
         
         // Setup game canvas
-        gameCanvas = new Canvas(800, 600);
+        gameCanvas = new Canvas(GameController.getWidth(), GameController.getHeight());
         gc = gameCanvas.getGraphicsContext2D();
         
         // Initialize overlay menus
@@ -214,4 +214,6 @@ public class GameScreen extends BorderPane {
             this.getChildren().addAll(title, scoreText, buttonBox);
         }
     }
+    
+    
 }

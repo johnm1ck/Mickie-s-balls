@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import base.Enemy;
+import base.MainCharacter;
+import base.Obstacle;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import model.*;
@@ -20,11 +24,17 @@ public class GameController {
     private AnimationTimer gameLoop;
     private long lastObstacleTime;
     private long lastEnemyAttackTime;
+    private long lastAutomaticBlastTime;
+    private long lastEnemyMoveTime;
+    private long obstaclePeriod;
     private boolean gameRunning;
     private boolean gamePaused;
     private boolean enemyMovingUp;
     private int enemiesDefeated;
     private boolean gameWon;
+    
+    private final static double height = 750;
+    private final static double width = 1500;
     
     public GameController(String characterType) {
         this.characterType = characterType;
@@ -44,17 +54,20 @@ public class GameController {
     
     private void initializeEntities() {
         // Create main character based on selection
-        if (characterType.equals("black")) {
-            mainCharacter = new BlackCat(400, 300);
+        if (characterType.equals("orange")) {
+            mainCharacter = new OrangeCat(width/2, height/2);
         } else {
-            mainCharacter = new WhiteCat(400, 300);
+            mainCharacter = new WhiteCat(width/2, height/2);
         }
         
         // Create initial enemy (Super Dog)
-        currentEnemy = new SuperDog(100, 300);
+        currentEnemy = new SuperDog(100, height/2);
         
         lastObstacleTime = 0;
         lastEnemyAttackTime = 0;
+        lastAutomaticBlastTime = 0;
+        lastEnemyMoveTime = 0;
+        obstaclePeriod = 790_000_000;
         enemyMovingUp = random.nextBoolean();
     }
     
@@ -96,20 +109,29 @@ public class GameController {
         return gameWon;
     }
     
+    // time measured in nanoseconds
     private void update(long now) {
         // Spawn obstacles periodically
-        if (now - lastObstacleTime > 1_000_000_000) { // 1 second in nanoseconds
+        if (now - lastObstacleTime > obstaclePeriod) { 
             spawnRandomObstacle();
             lastObstacleTime = now;
         }
         
         // Enemy random movement
-        updateEnemyMovement();
+        updateEnemyMovement(now);
         
         // Enemy random attack
         if (now - lastEnemyAttackTime > (1_000_000_000 + random.nextLong(3_000_000_000L))) {
             enemyShoot();
             lastEnemyAttackTime = now;
+        }
+        
+        // Automatic blasting for OrangeCat
+        if (this.characterType == "orange") {
+        	if (now - lastAutomaticBlastTime > ((OrangeCat)mainCharacter).getBlastingSpeed()) {
+        		this.shootKiBlastRight();
+        		lastAutomaticBlastTime = now;
+        	}
         }
         
         // Update all game entities
@@ -119,12 +141,16 @@ public class GameController {
         checkCollisions();
     }
     
-    private void updateEnemyMovement() {
+    private void updateEnemyMovement(long now) {
         if (currentEnemy == null) return;
         
         // Change direction occasionally
-        if (random.nextInt(100) < 2) { // 2% chance to change direction each update
-            enemyMovingUp = !enemyMovingUp;
+        // 43% chance to change direction every 1.69 second
+        if (now - lastEnemyMoveTime > 1_690_000_000) {
+        	lastEnemyMoveTime = now;
+        	if (random.nextInt(100) <= 43) {
+        		enemyMovingUp = !enemyMovingUp;        		
+        	}
         }
         
         // Move enemy
@@ -133,19 +159,20 @@ public class GameController {
             // Keep enemy on screen
             if (currentEnemy.getY() < 50) {
                 enemyMovingUp = false;
+                currentEnemy.moveDown();
             }
         } else {
             currentEnemy.moveDown();
             // Keep enemy on screen
-            if (currentEnemy.getY() > 550) {
+            if (currentEnemy.getY() > height - 50) {
                 enemyMovingUp = true;
+                currentEnemy.moveUp();
             }
         }
     }
     
     private void enemyShoot() {
         if (currentEnemy == null) return;
-        
         KiBlast blast = currentEnemy.shootKiBlast();
         enemyKiBlasts.add(blast);
     }
@@ -156,16 +183,16 @@ public class GameController {
         
         switch (type) {
             case 0:
-                obstacle = new Stone(800, 100 + random.nextInt(400));
+                obstacle = new Stone(width, 50 + random.nextInt((int)height - 100));
                 break;
             case 1:
-                obstacle = new Puppy(800, 100 + random.nextInt(400));
+                obstacle = new Puppy(width, 50 + random.nextInt((int)height - 100));
                 break;
             case 2:
-                obstacle = new BigDog(800, 100 + random.nextInt(400));
+                obstacle = new BigDog(width, 50 + random.nextInt((int)height - 100));
                 break;
             default:
-                obstacle = new Stone(800, 100 + random.nextInt(400));
+                obstacle = new Stone(width, 50 + random.nextInt((int)height - 100));
         }
         
         obstacles.add(obstacle);
@@ -201,7 +228,7 @@ public class GameController {
             blast.update();
             
             // Remove blasts that are off-screen
-            if (blast.getX() > 800 || blast.getX() < 0) {
+            if (blast.getX() > width || blast.getX() < 0) {
                 playerBlastIterator.remove();
             }
         }
@@ -213,7 +240,7 @@ public class GameController {
             blast.update();
             
             // Remove blasts that are off-screen
-            if (blast.getX() > 800 || blast.getX() < 0) {
+            if (blast.getX() > width || blast.getX() < 0) {
                 enemyBlastIterator.remove();
             }
         }
@@ -233,13 +260,16 @@ public class GameController {
                     Obstacle obstacle = obstacleIterator.next();
                     
                     if (blast.intersects(obstacle)) {
-                        obstacle.takeDamage();
+                        obstacle.takeDamage(mainCharacter.getDamage());
                         hitObstacle = true;
                         playerBlastIterator.remove();
                         
                         // Check if obstacle is destroyed
                         if (obstacle.isDestroyed()) {
                             score += obstacle.getPoints();
+                            // 25% chance to heal after destroying obstacle
+                            int toHeal = random.nextInt(4);
+                            if (toHeal == 1) mainCharacter.healHp();
                             obstacleIterator.remove();
                         }
                         
@@ -249,10 +279,8 @@ public class GameController {
             } else if (currentEnemy != null) { // Left-moving blasts check against enemy
                 if (blast.intersects(currentEnemy)) {
                     // Special attack logic
-                    int damage = (blast instanceof SpecialKiBlast) ? 
-                        ((SpecialKiBlast)blast).getDamage() : 1;
                     
-                    currentEnemy.takeDamage(damage);
+                    currentEnemy.takeDamage(blast.getDamage());
                     playerBlastIterator.remove();
                     
                     // Check if enemy is defeated
@@ -261,7 +289,10 @@ public class GameController {
                         
                         // Change to Ultra Dog after defeating Super Dog
                         if (enemiesDefeated == 1) {
-                            currentEnemy = new UltraDog(100, 300);
+                        	((SuperDog)currentEnemy).boom();
+                        	if (!mainCharacter.isSuperSaiyan()) mainCharacter.boom();
+                        	obstaclePeriod = 190_000_000;
+                            currentEnemy = new UltraDog(currentEnemy.getX(), currentEnemy.getY());
                         } else {
                             // Game victory condition
                             currentEnemy = null;
@@ -292,7 +323,8 @@ public class GameController {
                 Obstacle obstacle = obstacleIterator.next();
                 
                 if (obstacle.intersects(mainCharacter)) {
-                    mainCharacter.takeDamage();
+                    mainCharacter.takeDamage(obstacle);
+                    score += mainCharacter.isSuperSaiyan() ? obstacle.getPoints() : 0;
                     obstacleIterator.remove();
                 }
             }
@@ -319,18 +351,18 @@ public class GameController {
     
     public void shootKiBlastRight() {
         if (mainCharacter != null) {
-            KiBlast blast = mainCharacter.shootKiBlast();
+            KiBlast blast = mainCharacter.shootKiBlast(
+            		mainCharacter.getDamage(), mainCharacter.getKiSpeed());
             playerKiBlasts.add(blast);
         }
     }
     
-    public void shootSpecialKiBlastLeft(boolean ultimate) {
+    public void shootKiBlastLeft(boolean ultimate) {
         if (mainCharacter != null && currentEnemy != null) {
             int requiredPoints = ultimate ? currentEnemy.getMaxHp() : 10;
             
             if (score >= requiredPoints) {
-                int damage = ultimate ? currentEnemy.getMaxHp() : 10;
-                SpecialKiBlast blast = mainCharacter.shootSpecialKiBlast(damage);
+                KiBlast blast = mainCharacter.shootKiBlast(ultimate);
                 playerKiBlasts.add(blast);
                 score -= requiredPoints;
             }
@@ -340,11 +372,11 @@ public class GameController {
     public void render(GraphicsContext gc) {
         // Draw a simple background
         gc.setFill(javafx.scene.paint.Color.LIGHTBLUE);
-        gc.fillRect(0, 0, 800, 600);
+        gc.fillRect(0, 0, width, height);
         
         // Draw ground
         gc.setFill(javafx.scene.paint.Color.GREEN);
-        gc.fillRect(0, 550, 800, 50);
+        gc.fillRect(0, height-50, width, 50);
         
         // Render main character
         if (mainCharacter != null) {
@@ -373,7 +405,7 @@ public class GameController {
         
         // Render score and enemy HP
         gc.setFill(javafx.scene.paint.Color.BLACK);
-        gc.fillText("Score: " + score, 700, 20);
+        gc.fillText("Score: " + score, width-100, 20);
         
         if (currentEnemy != null) {
             gc.fillText("Enemy HP: " + currentEnemy.getCurrentHp() + "/" + currentEnemy.getMaxHp(), 20, 20);
@@ -396,4 +428,17 @@ public class GameController {
     public int getScore() {
         return score;
     }
+
+    public String getCharacterType() {
+    	return characterType;
+    }
+    
+	public static double getHeight() {
+		return height;
+	}
+
+	public static double getWidth() {
+		return width;
+	}
+    
 }

@@ -1,4 +1,4 @@
-package model;
+package base;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -44,7 +44,15 @@ public abstract class GameObject {
         return y;
     }
     
-    public double getWidth() {
+    public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+	}
+
+	public double getWidth() {
         return width;
     }
     

@@ -1,4 +1,4 @@
-package model;
+package base;
 
 public abstract class Character extends GameObject {
     protected int maxHp;
@@ -21,7 +21,7 @@ public abstract class Character extends GameObject {
         if (isMovingUp && y > 0) {
             y -= moveSpeed;
         }
-        if (isMovingDown && y < 600 - height) {
+        if (isMovingDown && y < 750 - height) {
             y += moveSpeed;
         }
     }
@@ -41,10 +41,14 @@ public abstract class Character extends GameObject {
         isMovingDown = false;
     }
     
-    public abstract KiBlast shootKiBlast();
-    
     public void takeDamage() {
         currentHp--;
+    }
+    
+    public void healHp() {
+    	if (this.currentHp < this.maxHp) {
+    		currentHp++;    		
+    	}
     }
     
     public boolean isDefeated() {

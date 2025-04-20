@@ -72,23 +72,23 @@ public class StartScreen extends VBox {
         characterOptions.setAlignment(Pos.CENTER);
         characterOptions.setPadding(new javafx.geometry.Insets(20));
         
-        // Black cat option
-        VBox blackCatOption = createCharacterOption(
-            "/resource/blackcat.png", 
-            "Black Cat", 
-            "black",
-            "Speed: ★★★★☆\nPower: ★★★☆☆"
+        // Orange cat option
+        VBox orangeCatOption = createCharacterOption(
+            "file:resource/orangecat.png", 
+            "Orange Cat", 
+            "orange",
+            "Automatic ki blasting"
         );
         
         // White cat option
         VBox whiteCatOption = createCharacterOption(
-            "/resource/whitecat.png", 
+            "file:resource/whitecat.png", 
             "White Cat", 
             "white",
-            "Speed: ★★★☆☆\nPower: ★★★★☆"
+            "Manual ki blasting"
         );
         
-        characterOptions.getChildren().addAll(blackCatOption, whiteCatOption);
+        characterOptions.getChildren().addAll(orangeCatOption, whiteCatOption);
         
         // Back button
         Button backButton = new Button("Back to Main Menu");
@@ -109,7 +109,7 @@ public class StartScreen extends VBox {
         // Character image
         ImageView characterImage = new ImageView();
         try {
-            Image image = new Image(getClass().getResourceAsStream(imagePath));
+            Image image = new Image(imagePath);
             characterImage.setImage(image);
             characterImage.setFitWidth(120);
             characterImage.setFitHeight(120);

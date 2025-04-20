@@ -1,4 +1,4 @@
-package model;
+package base;
 
 public abstract class Obstacle extends GameObject {
     protected int hitPoints;
@@ -19,8 +19,8 @@ public abstract class Obstacle extends GameObject {
         x -= speed;
     }
     
-    public void takeDamage() {
-        hitPoints--;
+    public void takeDamage(int damage) {
+        hitPoints -= damage;
     }
     
     public boolean isDestroyed() {
