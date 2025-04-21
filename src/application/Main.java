@@ -1,11 +1,9 @@
 package application;
-
 import gui.GameScreen;
 import gui.StartScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 public class Main extends Application {
     private Stage primaryStage;
     private Scene startScene;
@@ -25,6 +23,9 @@ public class Main extends Application {
         primaryStage.setScene(startScene);
         primaryStage.setResizable(false);
         primaryStage.show();
+        
+        // Play background music when game starts
+        SoundManager.startBackgroundMusic();
     }
     
     public void startNewGame(String characterType) {
@@ -104,6 +105,8 @@ public class Main extends Application {
     }
     
     public void exitGame() {
+        // Stop any playing sounds before exiting
+        SoundManager.stopBackgroundMusic();
         primaryStage.close();
     }
     

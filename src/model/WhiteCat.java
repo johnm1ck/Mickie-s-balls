@@ -1,5 +1,6 @@
 package model;
 
+import application.SoundManager;
 import base.BlasterState;
 import base.MainCharacter;
 import base.Transformable;
@@ -24,6 +25,8 @@ public class WhiteCat extends MainCharacter implements Transformable {
     // Right direction
     @Override
     public KiBlast shootKiBlast(int damage, double speed) {
+    	SoundManager.playKiSound();
+
     	BlasterState s = this.isSuperSaiyan ? BlasterState.SUPER_MAIN : BlasterState.NORM_MAIN;
         return new KiBlast(x + width, y + height/2, 1, damage, speed, s);
     }

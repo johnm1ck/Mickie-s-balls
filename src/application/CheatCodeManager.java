@@ -1,10 +1,8 @@
 package application;
-
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import java.util.LinkedList;
 import java.util.Queue;
-
 public class CheatCodeManager {
     private static final String[] superSaiyanCode = {"O", "O", "O", "O"};
     private GameController gameController;
@@ -22,10 +20,8 @@ public class CheatCodeManager {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKeyPress);
         this.gameController = gameController;
     }
-
     private void handleKeyPress(KeyEvent event) {
         String keyName = event.getCode().toString();
-
         keyPressHistory.add(keyName);
         
         // Keep the history size limited to max code length
@@ -60,10 +56,10 @@ public class CheatCodeManager {
             activateCheatCode(gameController);
         }
     }
-
     private void activateCheatCode(GameController gameController) {
     	if(!gameController.getMainCharacter().isSuperSaiyan()) {    		
     		gameController.getMainCharacter().boom();
+        	SoundManager.playBoomSound();
     	}
     }
 }

@@ -33,6 +33,9 @@ public class GameController {
     private int enemiesDefeated;
     private boolean gameWon;
     
+    // Track if super saiyan transformation has occurred
+    private boolean superSaiyanTransformed = false;
+    
     private final static double height = 750;
     private final static double width = 1500;
     
@@ -69,6 +72,12 @@ public class GameController {
         lastEnemyMoveTime = 0;
         obstaclePeriod = 790_000_000;
         enemyMovingUp = random.nextBoolean();
+        
+        // Reset super saiyan transformation flag
+        superSaiyanTransformed = false;
+        
+        // Reset sound manager's boom sound flag
+        SoundManager.resetBoomSound();
     }
     
     public void startGame() {
@@ -76,6 +85,9 @@ public class GameController {
             gameRunning = true;
             gamePaused = false;
             gameWon = false;
+            
+            // Start background music
+            SoundManager.startBackgroundMusic();
             
             gameLoop = new AnimationTimer() {
                 @Override
@@ -95,10 +107,17 @@ public class GameController {
         if (gameLoop != null) {
             gameLoop.stop();
         }
+        // Stop background music
+        SoundManager.stopBackgroundMusic();
     }
     
     public void togglePause() {
         gamePaused = !gamePaused;
+        if (gamePaused) {
+            SoundManager.pauseBackgroundMusic();
+        } else {
+            SoundManager.resumeBackgroundMusic();
+        }
     }
     
     public boolean isPaused() {
@@ -290,7 +309,13 @@ public class GameController {
                         // Change to Ultra Dog after defeating Super Dog
                         if (enemiesDefeated == 1) {
                         	((SuperDog)currentEnemy).boom();
-                        	if (!mainCharacter.isSuperSaiyan()) mainCharacter.boom();
+                        	
+                        	// Only transform main character if not already transformed
+                        	if (!mainCharacter.isSuperSaiyan()) {
+                        	    mainCharacter.boom();
+                        	    SoundManager.playBoomSound();
+                        	}
+                        	
                         	obstaclePeriod = 190_000_000;
                             currentEnemy = new UltraDog(currentEnemy.getX(), currentEnemy.getY());
                         } else {
@@ -440,5 +465,4 @@ public class GameController {
 	public static double getWidth() {
 		return width;
 	}
-    
 }
