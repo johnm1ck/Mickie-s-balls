@@ -32,7 +32,7 @@ public class Main extends Application {
         gameController = new GameController(characterType);
         
         // Initialize game screen
-        GameScreen gameScreen = new GameScreen(gameController);
+        GameScreen gameScreen = new GameScreen(gameController,this);
         gameScene = new Scene(gameScreen, GameController.getWidth(), GameController.getHeight());
         
         // Setup key handlers

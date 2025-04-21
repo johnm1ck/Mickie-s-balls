@@ -1,6 +1,7 @@
 package gui;
 
 import application.GameController;
+import application.Main;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,9 +24,11 @@ public class GameScreen extends BorderPane {
     private GameOverScreen gameOverScreen;
     private VictoryScreen victoryScreen;
     private AnimationTimer renderTimer;
+    private Main main;
     
-    public GameScreen(GameController gameController) {
+    public GameScreen(GameController gameController,Main main) {
         this.gameController = gameController;
+        this.main = main;
         
         // Setup game canvas
         gameCanvas = new Canvas(GameController.getWidth(), GameController.getHeight());
@@ -167,9 +170,13 @@ public class GameScreen extends BorderPane {
             
             Button retryButton = new Button("Try Again");
             retryButton.setPrefWidth(150);
-            
+            retryButton.setOnAction(e -> {
+                // Start a new game with the same character type
+                main.startNewGame(gameController.getCharacterType());
+            });
             Button mainMenuButton = new Button("Main Menu");
             mainMenuButton.setPrefWidth(150);
+            mainMenuButton.setOnAction(e -> main.returnToStartScreen());
             
             buttonBox.getChildren().addAll(retryButton, mainMenuButton);
             
@@ -204,10 +211,14 @@ public class GameScreen extends BorderPane {
             
             Button playAgainButton = new Button("Play Again");
             playAgainButton.setPrefWidth(150);
+            playAgainButton.setOnAction(e -> {
+                // Start a new game with the same character type
+                main.startNewGame(gameController.getCharacterType());
+            });
             
             Button mainMenuButton = new Button("Main Menu");
             mainMenuButton.setPrefWidth(150);
-            
+            mainMenuButton.setOnAction(e -> main.returnToStartScreen());
             buttonBox.getChildren().addAll(playAgainButton, mainMenuButton);
             
             // Add components to the victory screen
