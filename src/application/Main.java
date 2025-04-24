@@ -4,11 +4,13 @@ import gui.StartScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 public class Main extends Application {
     private Stage primaryStage;
     private Scene startScene;
     private Scene gameScene;
     private GameController gameController;
+    private GameScreen gameScreen;
     
     @Override
     public void start(Stage primaryStage) {
@@ -29,11 +31,16 @@ public class Main extends Application {
     }
     
     public void startNewGame(String characterType) {
+        // Clean up previous game resources if they exist
+        if (gameScreen != null) {
+            gameScreen.dispose();
+        }
+        
         // Initialize game controller with selected character
         gameController = new GameController(characterType);
         
         // Initialize game screen
-        GameScreen gameScreen = new GameScreen(gameController,this);
+        gameScreen = new GameScreen(gameController, this);
         gameScene = new Scene(gameScreen, GameController.getWidth(), GameController.getHeight());
         
         // Setup key handlers
@@ -48,8 +55,7 @@ public class Main extends Application {
         
         // Start the game loop
         gameController.startGame();
-    }
-    
+    }    
     private void setupKeyHandlers(Scene scene) {
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()) {
@@ -101,10 +107,20 @@ public class Main extends Application {
         if (gameController != null) {
             gameController.stopGame();
         }
+        
+        if (gameScreen != null) {
+            gameScreen.dispose();
+        }
+        
         primaryStage.setScene(startScene);
     }
     
     public void exitGame() {
+        // Clean up resources
+        if (gameScreen != null) {
+            gameScreen.dispose();
+        }
+        
         // Stop any playing sounds before exiting
         SoundManager.stopBackgroundMusic();
         primaryStage.close();

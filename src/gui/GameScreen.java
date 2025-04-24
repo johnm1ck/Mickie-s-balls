@@ -1,5 +1,6 @@
 package gui;
 
+import application.BackgroundManager;
 import application.GameController;
 import application.Main;
 import javafx.animation.AnimationTimer;
@@ -15,84 +16,134 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import model.SuperDog;
+import model.UltraDog;
 
 public class GameScreen extends BorderPane {
-    private GameController gameController;
-    private Canvas gameCanvas;
-    private GraphicsContext gc;
-    private PauseMenu pauseMenu;
-    private GameOverScreen gameOverScreen;
-    private VictoryScreen victoryScreen;
-    private AnimationTimer renderTimer;
-    private Main main;
+	   private GameController gameController;
+	    private Canvas gameCanvas;
+	    private GraphicsContext gc;
+	    private PauseMenu pauseMenu;
+	    private GameOverScreen gameOverScreen;
+	    private VictoryScreen victoryScreen;
+	    private AnimationTimer renderTimer;
+	    private Main main;
+	    private BackgroundManager backgroundManager;
+	    private StackPane gameArea;
     
-    public GameScreen(GameController gameController,Main main) {
-        this.gameController = gameController;
-        this.main = main;
-        
-        // Setup game canvas
-        gameCanvas = new Canvas(GameController.getWidth(), GameController.getHeight());
-        gc = gameCanvas.getGraphicsContext2D();
-        
-        // Initialize overlay menus
-        pauseMenu = new PauseMenu(gameController);
-        pauseMenu.setVisible(false);
-        
-        gameOverScreen = new GameOverScreen();
-        gameOverScreen.setVisible(false);
-        
-        victoryScreen = new VictoryScreen();
-        victoryScreen.setVisible(false);
-        
-        // Create stack pane to overlay menus on top of the game canvas
-        StackPane gameArea = new StackPane();
-        gameArea.getChildren().addAll(gameCanvas, pauseMenu, gameOverScreen, victoryScreen);
-        
-        // Add game area to the center of the border pane
-        this.setCenter(gameArea);
-        
-        // Start render loop
-        startRenderLoop();
-    }
+	    public GameScreen(GameController gameController, Main main) {
+	        this.gameController = gameController;
+	        this.main = main;
+	        
+	        // Create stack pane to overlay menus on top of the game canvas
+	        gameArea = new StackPane();
+	        
+	        // Initialize background manager (must be done before adding the canvas)
+	        backgroundManager = new BackgroundManager(gameArea);
+	        
+	        // Setup game canvas
+	        gameCanvas = new Canvas(GameController.getWidth(), GameController.getHeight());
+	        gc = gameCanvas.getGraphicsContext2D();
+	        
+	        // Initialize overlay menus
+	        pauseMenu = new PauseMenu(gameController);
+	        pauseMenu.setVisible(false);
+	        
+	        gameOverScreen = new GameOverScreen();
+	        gameOverScreen.setVisible(false);
+	        
+	        victoryScreen = new VictoryScreen();
+	        victoryScreen.setVisible(false);
+	        
+	        // Add canvas and overlays to the stack pane
+	        gameArea.getChildren().addAll(gameCanvas, pauseMenu, gameOverScreen, victoryScreen);
+	        
+	        // Add game area to the center of the border pane
+	        this.setCenter(gameArea);
+	        
+	        // Set initial background based on current enemy
+	        if (gameController.getCurrentEnemy() instanceof UltraDog) {
+	            backgroundManager.showUltraDogBackground();
+	        } else {
+	            backgroundManager.showSuperDogBackground();
+	        }
+	        
+	        // Start render loop
+	        startRenderLoop();
+	    }
     
-    private void startRenderLoop() {
-        renderTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                // Clear the canvas
-                gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
-                
-                // Draw background
-                gc.setFill(Color.LIGHTBLUE);
-                gc.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
-                
-                // Render game entities
-                gameController.render(gc);
-                
-                // Update UI overlays
-                updateOverlays();
-            }
-        };
-        
-        renderTimer.start();
-    }
+	    private void startRenderLoop() {
+	        renderTimer = new AnimationTimer() {
+	            private Class<?> lastEnemyType = null;
+	            
+	            @Override
+	            public void handle(long now) {
+	                // Clear the canvas with transparency to show the video beneath
+	                gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+	                
+	                // Check if enemy has changed
+	                if (gameController.getCurrentEnemy() != null) {
+	                    Class<?> currentEnemyType = gameController.getCurrentEnemy().getClass();
+	                    
+	                    if (lastEnemyType != currentEnemyType) {
+	                        if (currentEnemyType == UltraDog.class) {
+	                            backgroundManager.showUltraDogBackground();
+	                        } else if (currentEnemyType == SuperDog.class) {
+	                            backgroundManager.showSuperDogBackground();
+	                        }
+	                        lastEnemyType = currentEnemyType;
+	                    }
+	                }
+	                
+	                // No need to draw a background since we have video
+	                // Just draw the ground
+	             //   gc.setFill(Color.GREEN.deriveColor(0, 1, 1, 0.7)); // Semi-transparent green
+	               // gc.fillRect(0, gameCanvas.getHeight()-50, gameCanvas.getWidth(), 50);
+	                
+	                // Render game entities
+	                gameController.render(gc);
+	                
+	                // Update UI overlays
+	                updateOverlays();
+	            }
+	        };
+	        
+	        renderTimer.start();
+	    }
     
-    private void updateOverlays() {
-        // Show/hide pause menu
-        pauseMenu.setVisible(gameController.isPaused());
-        
-        // Check for game over or victory conditions
-        if (gameController.getMainCharacter().isDefeated()) {
-            gameOverScreen.setVisible(true);
-            gameController.stopGame();
-            renderTimer.stop();
-        } else if (gameController.isGameWon()) {
-            victoryScreen.setVisible(true);
-            gameController.stopGame();
-            renderTimer.stop();
-        }
-    }
-    
+	    private void updateOverlays() {
+	        // Update pause state for background video
+	        if (gameController.isPaused() && !pauseMenu.isVisible()) {
+	            pauseMenu.setVisible(true);
+	            backgroundManager.pauseVideo();
+	        } else if (!gameController.isPaused() && pauseMenu.isVisible()) {
+	            pauseMenu.setVisible(false);
+	            backgroundManager.resumeVideo();
+	        }
+	        
+	        // Check for game over or victory conditions
+	        if (gameController.getMainCharacter().isDefeated()) {
+	            gameOverScreen.setVisible(true);
+	            gameController.stopGame();
+	            renderTimer.stop();
+	            backgroundManager.pauseVideo();
+	        } else if (gameController.isGameWon()) {
+	            victoryScreen.setVisible(true);
+	            gameController.stopGame();
+	            renderTimer.stop();
+	            backgroundManager.pauseVideo();
+	        }
+	    }
+	    
+	    public void dispose() {
+	        // Clean up resources when closing the screen
+	        if (backgroundManager != null) {
+	            backgroundManager.dispose();
+	        }
+	        if (renderTimer != null) {
+	            renderTimer.stop();
+	        }
+	    }
     // Inner class for pause menu
     private class PauseMenu extends VBox {
         public PauseMenu(GameController gameController) {
