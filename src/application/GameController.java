@@ -164,15 +164,13 @@ public class GameController {
 	private void updateEnemyMovement(long now) {
 		if (currentEnemy == null)
 			return;
-
-		// Change direction occasionally
-		// 43% chance to change direction every 1.69 second
-		if (now - lastEnemyMoveTime > 1_690_000_000) {
-			lastEnemyMoveTime = now;
-			if (random.nextInt(100) <= 43) {
-				enemyMovingUp = !enemyMovingUp;
-			}
-		}
+		
+		  if (now - lastEnemyMoveTime > 500_000_000) {  // Reduced interval from 1.69s to 0.5s
+		        lastEnemyMoveTime = now;
+		        if (random.nextInt(100) <= 70) {  // 43% chance to change direction
+		            enemyMovingUp = !enemyMovingUp;
+		        }
+		    }
 
 		// Move enemy
 		if (enemyMovingUp) {

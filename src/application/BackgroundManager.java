@@ -1,60 +1,77 @@
 package application;
 
-import javafx.scene.layout.BackgroundFill;
+import javafx.animation.PauseTransition;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 
-import java.io.File;
+
 
 public class BackgroundManager {
+	
+	private ImageView placeholderImageView;
 	private MediaPlayer superDogBackgroundPlayer;
 	private MediaPlayer ultraDogBackgroundPlayer;
 	private MediaView mediaView;
 
 	public BackgroundManager(Pane container) {
+	    try {
+	        Media greenSkyVideo = new Media(
+	                ClassLoader.getSystemResource("resource/background/greensky.mp4").toString());
+	        Media purpleSkyVideo = new Media(
+	                ClassLoader.getSystemResource("resource/background/purplesky.mp4").toString());
 
-		try {
+	        superDogBackgroundPlayer = new MediaPlayer(greenSkyVideo);
+	        ultraDogBackgroundPlayer = new MediaPlayer(purpleSkyVideo);
 
-			// Media greenSkyVideo = new Media(new
-			// File("resource/greensky.mp4").toURI().toString());
-			Media greenSkyVideo = new Media(
-					ClassLoader.getSystemResource("resource/background/greensky.mp4").toString());
-			Media purpleSkyVideo = new Media(
-					ClassLoader.getSystemResource("resource/background/purplesky.mp4").toString());
+	        superDogBackgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+	        ultraDogBackgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
-			superDogBackgroundPlayer = new MediaPlayer(greenSkyVideo);
-			ultraDogBackgroundPlayer = new MediaPlayer(purpleSkyVideo);
+	        mediaView = new MediaView();
+	        mediaView.fitWidthProperty().bind(container.widthProperty());
+	        mediaView.fitHeightProperty().bind(container.heightProperty());
 
-			superDogBackgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-			ultraDogBackgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+	        // Load placeholder image
+	        Image placeholderImage = new Image(ClassLoader.getSystemResource("resource/background/greensky_firstfram.png").toString());
+	        placeholderImageView = new ImageView(placeholderImage);
+	        placeholderImageView.fitWidthProperty().bind(container.widthProperty());
+	        placeholderImageView.fitHeightProperty().bind(container.heightProperty());
 
-//            
-			mediaView = new MediaView();
+	        // Add placeholder image and mediaView to container
+	        container.getChildren().add(0, mediaView);
+	        container.getChildren().add(0, placeholderImageView); // make sure image is in front
 
-//         
-			mediaView.fitWidthProperty().bind(container.widthProperty());
-			mediaView.fitHeightProperty().bind(container.heightProperty());
-
-			container.getChildren().add(0, mediaView);
-
-		} catch (Exception e) {
-			System.out.println("Error loading video backgrounds: " + e.getMessage());
-			e.printStackTrace();
-		}
+	    } catch (Exception e) {
+	        System.out.println("Error loading video backgrounds: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 
 	public void showSuperDogBackground() {
-		if (mediaView != null && superDogBackgroundPlayer != null) {
+	    if (mediaView != null && superDogBackgroundPlayer != null) {
+	        stopAllVideos();
 
-			stopAllVideos();
+	        // Show placeholder
+	        placeholderImageView.setVisible(true);
+	        mediaView.setVisible(false);
 
-			mediaView.setMediaPlayer(superDogBackgroundPlayer);
-			superDogBackgroundPlayer.seek(Duration.ZERO);
-			superDogBackgroundPlayer.play();
-		}
+	        // Prepare MediaPlayer
+	        mediaView.setMediaPlayer(superDogBackgroundPlayer);
+	        superDogBackgroundPlayer.seek(Duration.ZERO);
+
+	        // Wait for 2-3 seconds, then switch to video
+	        PauseTransition delay = new PauseTransition(Duration.seconds(5));
+	        delay.setOnFinished(event -> {
+	            placeholderImageView.setVisible(false);
+	            mediaView.setVisible(true);
+	            superDogBackgroundPlayer.play();
+	        });
+	        delay.play();
+	    }
 	}
 
 	public void showUltraDogBackground() {
