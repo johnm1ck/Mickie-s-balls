@@ -2,26 +2,28 @@ package application;
 
 public class ImageManager {
 
-	public final static String WHITEBLAST_URL = ClassLoader.getSystemResource("resource/whiteblast.png").toString();
-	public final static String GRAYBLAST_URL = ClassLoader.getSystemResource("resource/grayblast.png").toString();
-	public final static String LIGHTPURPLEBLAST_URL = ClassLoader.getSystemResource("resource/lightpurpleblast.png").toString();
-	public final static String PURPLEBLAST_URL = ClassLoader.getSystemResource("resource/purpleblast.png").toString();	
-	public final static String LIGHTYELLOWBLAST_URL = ClassLoader.getSystemResource("resource/lightyellowblast.png").toString();
-	public final static String YELLOWBLAST_URL = ClassLoader.getSystemResource("resource/yellowblast.png").toString();
-	public final static String LIGHTBLUELBLAST_URL = ClassLoader.getSystemResource("resource/lightblueblast.png").toString();
-	public final static String BLUELBLAST_URL = ClassLoader.getSystemResource("resource/blueblast.png").toString();
-	
-	public final static String BIGDOG_URL = ClassLoader.getSystemResource("resource/bigdog.png").toString();
-	public final static String ORANGECAT_URL = ClassLoader.getSystemResource("resource/orangecat.png").toString();
-	public final static String SUPERORANGECAT_URL = ClassLoader.getSystemResource("resource/superorangecat.png").toString();
-	public final static String WHITECAT_URL = ClassLoader.getSystemResource("resource/whitecat.png").toString();
-	public final static String SUPERWHITECAT_URL = ClassLoader.getSystemResource("resource/superwhitecat.png").toString();
-	public final static String PUPPY_URL = ClassLoader.getSystemResource("resource/puppy.png").toString();
-	public final static String STONE_URL = ClassLoader.getSystemResource("resource/stone.png").toString();
-	public final static String SUPERDOG_URL = ClassLoader.getSystemResource("resource/superdog.png").toString();
-	public final static String ULTRADOG_URL = ClassLoader.getSystemResource("resource/ultradog.png").toString();
-	
-	
-	
-	//public final static String BIGDOGURL = ClassLoader.getSystemResource("resource/bigdog.png").toString();
+	private static final String IMAGE_PATH = "resource/image/";
+
+	private static String loadImagePath(String fileName) {
+		return ClassLoader.getSystemResource(IMAGE_PATH + fileName).toString();
+	}
+
+	public static final String WHITEBLAST_URL = loadImagePath("whiteblast.png");
+	public static final String GRAYBLAST_URL = loadImagePath("grayblast.png");
+	public static final String LIGHTPURPLEBLAST_URL = loadImagePath("lightpurpleblast.png");
+	public static final String PURPLEBLAST_URL = loadImagePath("purpleblast.png");
+	public static final String LIGHTYELLOWBLAST_URL = loadImagePath("lightyellowblast.png");
+	public static final String YELLOWBLAST_URL = loadImagePath("yellowblast.png");
+	public static final String LIGHTBLUELBLAST_URL = loadImagePath("lightblueblast.png");
+	public static final String BLUELBLAST_URL = loadImagePath("blueblast.png");
+
+	public static final String BIGDOG_URL = loadImagePath("bigdog.png");
+	public static final String ORANGECAT_URL = loadImagePath("orangecat.png");
+	public static final String SUPERORANGECAT_URL = loadImagePath("superorangecat.png");
+	public static final String WHITECAT_URL = loadImagePath("whitecat.png");
+	public static final String SUPERWHITECAT_URL = loadImagePath("superwhitecat.png");
+	public static final String PUPPY_URL = loadImagePath("puppy.png");
+	public static final String STONE_URL = loadImagePath("stone.png");
+	public static final String SUPERDOG_URL = loadImagePath("superdog.png");
+	public static final String ULTRADOG_URL = loadImagePath("ultradog.png");
 }

@@ -1,145 +1,126 @@
 package application;
 
-import java.io.File;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 public class SoundManager {
-    private static MediaPlayer kiBlastPlayer;
-    private static MediaPlayer deathPlayer;
-    private static MediaPlayer boomPlayer;
-    private static MediaPlayer hitPlayer;
-    private static MediaPlayer backgroundMusicPlayer;
-    
-    // Track if boom sound has been played for super saiyan transformation
-    private static boolean boomSoundPlayed = false;
 
-    // Initialize the media players
-    static {
-        try {
-            // Load all sound effects
-            Media kiSound = new Media(new File("resource/ki.mp3").toURI().toString());
-            Media deathSound = new Media(new File("resource/death.mp3").toURI().toString());
-            Media boomSound = new Media(new File("resource/boom.mp3").toURI().toString());
-            Media hitSound = new Media(new File("resource/hit.mp3").toURI().toString());
-            Media bgmSound = new Media(new File("resource/bgm.mp3").toURI().toString());
+	private static Media kiSound;
+	private static Media deathSound;
+	private static Media boomSound;
+	private static Media hitSound;
+	private static Media bgmSound;
 
-            // Create players
-            kiBlastPlayer = new MediaPlayer(kiSound);
-            deathPlayer = new MediaPlayer(deathSound);
-            boomPlayer = new MediaPlayer(boomSound);
-            hitPlayer = new MediaPlayer(hitSound);
-            backgroundMusicPlayer = new MediaPlayer(bgmSound);
-            backgroundMusicPlayer.setVolume(0.2);
+	private static MediaPlayer kiBlastPlayer;
+	private static MediaPlayer deathPlayer;
+	private static MediaPlayer boomPlayer;
+	private static MediaPlayer hitPlayer;
+	private static MediaPlayer backgroundMusicPlayer;
 
-            // Set players to reset when they finish playing
-            kiBlastPlayer.setOnEndOfMedia(() -> kiBlastPlayer.seek(Duration.ZERO));
-            deathPlayer.setOnEndOfMedia(() -> deathPlayer.seek(Duration.ZERO));
-            boomPlayer.setOnEndOfMedia(() -> boomPlayer.seek(Duration.ZERO));
-            hitPlayer.setOnEndOfMedia(() -> hitPlayer.seek(Duration.ZERO));
-            
-            // Set background music to loop
-            backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            
-        } catch (Exception e) {
-            System.out.println("Error loading sound files: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	private static boolean boomSoundPlayed = false;
 
-    // Play the ki blast sound
-    public static void playKiSound() {
-//        if (kiBlastPlayer != null) {
-//            kiBlastPlayer.stop();
-//            kiBlastPlayer.seek(Duration.ZERO);
-//            kiBlastPlayer.play();
-//        }
-    	 playNewSound("resource/ki.mp3");
-    }
+	static {
+		try {
+			// Assign directly to class variables (no shadowing)
+			
+			kiSound = loadMedia("resource/sound/ki.mp3");
+			deathSound = loadMedia("resource/sound/death.mp3");
+			boomSound = loadMedia("resource/sound/boom.mp3");
+			hitSound = loadMedia("resource/sound/hit.mp3");
+			bgmSound = loadMedia("resource/sound/bgm.mp3");
+			bgmSound = new Media(ClassLoader.getSystemResource("resource/sound/bgm.mp3").toString());
 
-    // Play the death sound
-    public static void playDeathSound() {
-//        if (deathPlayer != null && !isDeathSoundPlaying()) {
-//            deathPlayer.stop();
-//            deathPlayer.seek(Duration.ZERO);
-//            deathPlayer.play();
-//        }
-    	 playNewSound("resource/death.mp3");
-    }
+			kiBlastPlayer = new MediaPlayer(kiSound);
+			kiBlastPlayer.setVolume(0.2); 
 
-    // Check if death sound is already playing
-    private static boolean isDeathSoundPlaying() {
-        return deathPlayer.getStatus() == MediaPlayer.Status.PLAYING;
-    }
+			deathPlayer = new MediaPlayer(deathSound);
+			deathPlayer.setVolume(0.4);  
 
-    // Play the transformation sound (only once per transformation)
-    public static void playBoomSound() {
-//        if (boomPlayer != null && !boomSoundPlayed) {
-//            boomPlayer.stop();
-//            boomPlayer.seek(Duration.ZERO);
-//            boomPlayer.play();
-//            boomSoundPlayed = true;
-//        }
-    	 playNewSound("resource/boom.mp3");
-    }
-    
-    // Reset boom sound flag (for new game)
-    public static void resetBoomSound() {
-        boomSoundPlayed = false;
-    }
-    
-    // Play hit sound when player takes damage
-    public static void playHitSound() {
-//        if (hitPlayer != null) {
-//            hitPlayer.stop();
-//            hitPlayer.seek(Duration.ZERO);
-//            hitPlayer.play();
-//        }
-    	 playNewSound("resource/hit.mp3");
-    }
-    
-    // Start background music
-    public static void startBackgroundMusic() {
-        if (backgroundMusicPlayer != null) {
-            backgroundMusicPlayer.seek(Duration.ZERO);
-            backgroundMusicPlayer.play();
-        }
-    }
-    
-    // Stop background music
-    public static void stopBackgroundMusic() {
-        if (backgroundMusicPlayer != null) {
-            backgroundMusicPlayer.stop();
-        }
-    }
-    
-    // Pause background music
-    public static void pauseBackgroundMusic() {
-        if (backgroundMusicPlayer != null) {
-            backgroundMusicPlayer.pause();
-        }
-    }
-    
-    // Resume background music
-    public static void resumeBackgroundMusic() {
-        if (backgroundMusicPlayer != null) {
-            backgroundMusicPlayer.play();
-        }
-    }
-    private static void playNewSound(String filePath) {
-        try {
-            Media sound = new Media(new File(filePath).toURI().toString());
-            MediaPlayer player = new MediaPlayer(sound);
-            player.play();
+			boomPlayer = new MediaPlayer(boomSound);
+			boomPlayer.setVolume(0.3);  
 
-            // Dispose when done to free memory
-            player.setOnEndOfMedia(() -> {
-                player.dispose();
-            });
+			hitPlayer = new MediaPlayer(hitSound);
+			hitPlayer.setVolume(0.2);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	
+
+			backgroundMusicPlayer = new MediaPlayer(bgmSound);
+
+			backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+			backgroundMusicPlayer.setVolume(0.2);
+
+			// Reset players when sound ends
+			kiBlastPlayer.setOnEndOfMedia(() -> kiBlastPlayer.seek(Duration.ZERO));
+			deathPlayer.setOnEndOfMedia(() -> deathPlayer.seek(Duration.ZERO));
+			boomPlayer.setOnEndOfMedia(() -> boomPlayer.seek(Duration.ZERO));
+			hitPlayer.setOnEndOfMedia(() -> hitPlayer.seek(Duration.ZERO));
+
+		} catch (Exception e) {
+			System.err.println("Error loading media files:");
+			e.printStackTrace();
+		}
+	}
+	private static Media loadMedia(String path) {
+		return new Media(ClassLoader.getSystemResource(path).toString());
+	}
+	private static void playNewSound(Media sound) {
+		try {
+			if (sound == null) return;
+			MediaPlayer player = new MediaPlayer(sound);
+			player.play();
+			player.setOnEndOfMedia(player::dispose);
+		} catch (Exception e) {
+			System.err.println("Failed to play sound.");
+			e.printStackTrace();
+		}
+	}
+
+	public static void playKiSound() {
+		playNewSound(kiSound);
+	}
+
+	public static void playDeathSound() {
+		playNewSound(deathSound);
+	}
+
+	public static void playBoomSound() {
+		if (!boomSoundPlayed) {
+			playNewSound(boomSound);
+			boomSoundPlayed = true;
+		}
+	}
+
+	public static void resetBoomSound() {
+		boomSoundPlayed = false;
+	}
+
+	public static void playHitSound() {
+		playNewSound(hitSound);
+	}
+
+	public static void startBackgroundMusic() {
+		if (backgroundMusicPlayer != null) {
+			backgroundMusicPlayer.seek(Duration.ZERO);
+			backgroundMusicPlayer.play();
+		}
+	}
+
+	public static void stopBackgroundMusic() {
+		if (backgroundMusicPlayer != null) {
+			backgroundMusicPlayer.stop();
+		}
+	}
+
+	public static void pauseBackgroundMusic() {
+		if (backgroundMusicPlayer != null) {
+			backgroundMusicPlayer.pause();
+		}
+	}
+
+	public static void resumeBackgroundMusic() {
+		if (backgroundMusicPlayer != null) {
+			backgroundMusicPlayer.play();
+		}
+	}
 }

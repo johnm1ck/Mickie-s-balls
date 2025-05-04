@@ -1,5 +1,6 @@
 package gui;
 
+import application.ImageManager;
 import application.Main;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -74,7 +75,7 @@ public class StartScreen extends VBox {
         
         // Orange cat option
         VBox orangeCatOption = createCharacterOption(
-            "file:resource/orangecat.png", 
+            ImageManager.ORANGECAT_URL, 
             "Orange Cat", 
             "orange",
             "Automatic ki blasting"
@@ -82,7 +83,7 @@ public class StartScreen extends VBox {
         
         // White cat option
         VBox whiteCatOption = createCharacterOption(
-            "file:resource/whitecat.png", 
+        		ImageManager.WHITECAT_URL, 
             "White Cat", 
             "white",
             "Manual ki blasting"

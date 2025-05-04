@@ -1,5 +1,6 @@
 package application;
 
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -18,9 +19,10 @@ public class BackgroundManager {
         this.container = container;
         
         try {
-     
-            Media greenSkyVideo = new Media(new File("resource/greensky.mp4").toURI().toString());
-            Media purpleSkyVideo = new Media(new File("resource/purplesky.mp4").toURI().toString());
+
+           // Media greenSkyVideo = new Media(new File("resource/greensky.mp4").toURI().toString());
+        	Media greenSkyVideo = new Media(ClassLoader.getSystemResource("resource/background/greensky.mp4").toString());
+            Media purpleSkyVideo = new Media(ClassLoader.getSystemResource("resource/background/purplesky.mp4").toString());
             
            
             superDogBackgroundPlayer = new MediaPlayer(greenSkyVideo);
