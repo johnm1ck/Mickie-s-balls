@@ -1,5 +1,6 @@
 package model;
 
+import application.ImageManager;
 import base.Obstacle;
 import javafx.scene.image.Image;
 
@@ -12,7 +13,7 @@ public class Stone extends Obstacle {
         super(x, y, 41, 41, STONE_HIT_POINTS, STONE_POINTS, STONE_SPEED);
         try {
             // Load sprite from resources
-            sprite = new Image("file:resource/stone.png");
+            sprite = new Image(ImageManager.STONE_URL);
         } catch (Exception e) {
             System.out.println("Could not load stone sprite: " + e.getMessage());
         }

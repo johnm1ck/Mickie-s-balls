@@ -3,7 +3,7 @@ package model;
 import base.GameObject;
 import javafx.scene.image.Image;
 import base.BlasterState;
-
+import application.ImageManager;
 public class KiBlast extends GameObject {
     private int direction; // 1 for right, -1 for left
     private double speed;
@@ -20,16 +20,16 @@ public class KiBlast extends GameObject {
         	if (direction == 1) {
         		switch (s) {
         			case BlasterState.NORM_MAIN:
-        				sprite = new Image("file:resource/whiteblast.png");
+        				sprite = new Image(ImageManager.WHITEBLAST_URL);
         				break;
         			case BlasterState.SUPER_MAIN:
-        				sprite = new Image("file:resource/grayblast.png");
+        				sprite = new Image(ImageManager.GRAYBLAST_URL);
         				break;
         			case BlasterState.NORM_ENEMY:
-        				sprite = new Image("file:resource/lightpurpleblast.png");
+        				sprite = new Image(ImageManager.LIGHTPURPLEBLAST_URL);
         				break;
         			case BlasterState.ULTRA_ENEMY:
-        				sprite = new Image("file:resource/purpleblast.png");
+        				sprite = new Image(ImageManager.PURPLEBLAST_URL);
         				break;
         			default:
         				break;
@@ -39,7 +39,7 @@ public class KiBlast extends GameObject {
     			case BlasterState.NORM_MAIN:
     				break;
     			case BlasterState.SUPER_MAIN:
-    				sprite = new Image("file:resource/grayblast.png");
+    				sprite = new Image(ImageManager.GRAYBLAST_URL);
     				break;
 				default:
 					break;
@@ -68,12 +68,12 @@ public class KiBlast extends GameObject {
         	if (direction == -1) {
         		switch (s) {
         			case BlasterState.NORM_MAIN:
-        				sprite = ultimate ? new Image("file:resource/lightblueblast.png")
-        						: new Image("file:resource/lightyellowblast.png");
+        				sprite = ultimate ? new Image(ImageManager.LIGHTBLUELBLAST_URL)
+        						: new Image(ImageManager.LIGHTYELLOWBLAST_URL);
         				break;
         			case BlasterState.SUPER_MAIN:
-        				sprite = ultimate ? new Image("file:resource/blueblast.png") 
-        						: new Image("file:resource/yellowblast.png");
+        				sprite = ultimate ? new Image(ImageManager.BLUELBLAST_URL) 
+        						: new Image(ImageManager.YELLOWBLAST_URL);
         				break;
         			default:
         				break;

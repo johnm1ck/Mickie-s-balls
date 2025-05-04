@@ -94,6 +94,6 @@ public class BackgroundManager {
     
     public void dispose() {
         stopAllVideos();
-       
+   
     }
 }

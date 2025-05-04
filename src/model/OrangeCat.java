@@ -1,5 +1,6 @@
 package model;
 
+import application.ImageManager;
 import base.MainCharacter;
 import base.Transformable;
 import javafx.scene.image.Image;
@@ -17,7 +18,7 @@ public class OrangeCat extends MainCharacter implements Transformable {
         
         try {
             // Load sprite from resources
-            this.sprite = new Image("file:resource/orangecat.png");
+            this.sprite = new Image(ImageManager.ORANGECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load orange cat sprite: " + e.getMessage());
         }
@@ -31,7 +32,7 @@ public class OrangeCat extends MainCharacter implements Transformable {
 		this.moveSpeed = 6.7;
 		try {
             // Load sprite from resources
-			this.sprite = new Image("file:resource/superorangecat.png");
+			this.sprite = new Image(ImageManager.SUPERORANGECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }

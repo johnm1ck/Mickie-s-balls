@@ -1,5 +1,6 @@
 package model;
 
+import application.ImageManager;
 import base.Obstacle;
 import javafx.scene.image.Image;
 
@@ -12,7 +13,7 @@ public class Puppy extends Obstacle {
         super(x, y, 64, 64, PUPPY_HIT_POINTS, PUPPY_POINTS, PUPPY_SPEED);
         try {
             // Load sprite from resources
-            sprite = new Image("file:resource/puppy.png");
+            sprite = new Image(ImageManager.PUPPY_URL);
         } catch (Exception e) {
             System.out.println("Could not load puppy sprite: " + e.getMessage());
         }

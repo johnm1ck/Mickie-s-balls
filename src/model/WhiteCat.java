@@ -1,5 +1,6 @@
 package model;
 
+import application.ImageManager;
 import application.SoundManager;
 import base.BlasterState;
 import base.MainCharacter;
@@ -16,7 +17,7 @@ public class WhiteCat extends MainCharacter implements Transformable {
         
         try {
             // Load sprite from resources
-            this.sprite = new Image("file:resource/whitecat.png");
+            this.sprite = new Image(ImageManager.WHITECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }
@@ -40,7 +41,7 @@ public class WhiteCat extends MainCharacter implements Transformable {
 		this.moveSpeed = 6.7;
 		try {
             // Load sprite from resources
-			this.sprite = new Image("file:resource/superwhitecat.png");
+			this.sprite = new Image(ImageManager.SUPERWHITECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }

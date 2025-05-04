@@ -1,5 +1,6 @@
 package model;
 
+import application.ImageManager;
 import base.BlasterState;
 import base.Enemy;
 import base.Transformable;
@@ -12,7 +13,7 @@ public class SuperDog extends Enemy implements Transformable {
         super(x, y, 93, 93, SUPER_DOG_MAX_HP, 2.3);
         try {
             // Load sprite from resources
-            this.sprite = new Image("file:resource/superdog.png");
+            this.sprite = new Image(ImageManager.SUPERDOG_URL);
         } catch (Exception e) {
             System.out.println("Could not load super dog sprite: " + e.getMessage());
         }

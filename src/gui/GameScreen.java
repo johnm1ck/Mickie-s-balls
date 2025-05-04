@@ -252,7 +252,7 @@ public class GameScreen extends BorderPane {
             title.setFill(Color.GOLD);
             
             // Score display
-            Text scoreText = new Text("Final Score: " + gameController.getScore());
+            Text scoreText = new Text();
             scoreText.setFont(new Font(20));
             scoreText.setFill(Color.WHITE);
             
