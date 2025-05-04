@@ -32,7 +32,7 @@ public class SoundManager {
 			bgmSound = new Media(ClassLoader.getSystemResource("resource/sound/bgm.mp3").toString());
 
 			kiBlastPlayer = new MediaPlayer(kiSound);
-			kiBlastPlayer.setVolume(0.2); 
+			kiBlastPlayer.setVolume(0.1); 
 
 			deathPlayer = new MediaPlayer(deathSound);
 			deathPlayer.setVolume(0.4);  
