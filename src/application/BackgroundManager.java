@@ -94,11 +94,6 @@ public class BackgroundManager {
     
     public void dispose() {
         stopAllVideos();
-        if (superDogBackgroundPlayer != null) {
-            superDogBackgroundPlayer.dispose();
-        }
-        if (ultraDogBackgroundPlayer != null) {
-            ultraDogBackgroundPlayer.dispose();
-        }
+       
     }
 }
