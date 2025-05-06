@@ -1,11 +1,15 @@
 package gui;
 
+import java.util.List;
+
 import application.ImageManager;
 import application.Main;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -19,6 +23,7 @@ public class StartScreen extends VBox {
         this.setAlignment(Pos.CENTER);
         this.setSpacing(20);
         this.setPadding(new javafx.geometry.Insets(50));
+        //this.setBackground(new Background(new BackgroundImage(new Image("resource/background/main1.png"), null, null, null, null)));
         this.setStyle("-fx-background-color: lightblue;");
         
         // Show the main menu initially

@@ -477,4 +477,7 @@ public class GameController {
 	public static double getWidth() {
 		return width;
 	}
+	public void setScore(int score) {
+		this.score = score;
+	}
 }

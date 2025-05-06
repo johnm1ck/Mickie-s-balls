@@ -63,4 +63,10 @@ public abstract class Character extends GameObject {
     public int getCurrentHp() {
         return currentHp;
     }
+    public void setCurrentHp(int currentHp) {
+		this.currentHp = currentHp;
+	}
+    public void setMaxHp(int maxHp) {
+		this.maxHp = maxHp;
+	}
 }
