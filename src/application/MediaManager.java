@@ -36,6 +36,7 @@ public class MediaManager {
 	public static final String STONE_URL = loadSpritePath("stone.png");
 	public static final String SUPERDOG_URL = loadSpritePath("super_dog.png");
 	public static final String ULTRADOG_URL = loadSpritePath("ultra_dog.png");
+	public static final String CAT_SUNGLASSES = loadSpritePath("cat_sunglasses.png");
 	
 	public static final String GREEN_SKY_URL = loadBackgroundPath("green_sky.mp4");
 	public static final String GREEN_SKY_FIRST_FRAME_URL = loadBackgroundPath("green_sky_first_frame.png");

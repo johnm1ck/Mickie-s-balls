@@ -24,7 +24,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Cat vs Dogs Game");
+        this.primaryStage.setTitle("Catto a Go Go !");
         
         // load the ImageViews and MediaPlayers
         greenPlaceholder = new ImageView(new Image(MediaManager.GREEN_SKY_FIRST_FRAME_URL));
@@ -44,6 +44,7 @@ public class Main extends Application {
         // Set the initial scene to the start screen
         primaryStage.setScene(startScene);
         primaryStage.setResizable(false);
+        primaryStage.getIcons().add(new Image(MediaManager.CAT_SUNGLASSES));
         primaryStage.show();
         
         // Play background music when game starts

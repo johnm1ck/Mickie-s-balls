@@ -68,7 +68,7 @@ public class SoundManager {
 	}
 	
 	public static void playDogCrySound() {
-		playNewSound(dogCrySound, 0.4);
+		playNewSound(dogCrySound, 0.29);
 	}
 	
 	public static void playVictorySound() {
@@ -123,7 +123,7 @@ public class SoundManager {
 		if(backgroundMusicPlayer != null) {
 			backgroundMusicPlayer.dispose();
 			backgroundMusicPlayer = new MediaPlayer(superBgmSound);
-			backgroundMusicPlayer.setVolume(0.35);
+			backgroundMusicPlayer.setVolume(0.32);
 			backgroundMusicPlayer.play();
 			backgroundMusicPlayer.setOnEndOfMedia(() -> startInGameBackgroundMusic());
 		}
