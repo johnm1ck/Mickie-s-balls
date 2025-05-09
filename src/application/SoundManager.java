@@ -85,7 +85,7 @@ public class SoundManager {
 
 	public static void playBoomSound() {
 		if (!boomSoundPlayed) {
-			playNewSound(boomSound, 0.96);
+			playNewSound(boomSound, 1);
 			boomSoundPlayed = true;
 		}
 	}
@@ -123,7 +123,7 @@ public class SoundManager {
 		if(backgroundMusicPlayer != null) {
 			backgroundMusicPlayer.dispose();
 			backgroundMusicPlayer = new MediaPlayer(superBgmSound);
-			backgroundMusicPlayer.setVolume(0.36);
+			backgroundMusicPlayer.setVolume(0.35);
 			backgroundMusicPlayer.play();
 			backgroundMusicPlayer.setOnEndOfMedia(() -> startInGameBackgroundMusic());
 		}
