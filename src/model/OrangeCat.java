@@ -1,24 +1,28 @@
 package model;
 
-import application.ImageManager;
+import application.MediaManager;
 import base.MainCharacter;
 import base.Transformable;
 import javafx.scene.image.Image;
 
 public class OrangeCat extends MainCharacter implements Transformable {
-    private static final int CAT_MAX_HP = 10;
-    private long BLASTING_SPEED;
+    private long blastingPeriod;
+    private static final long START_BLASTING_PERIOD = 284_000_000;
+    private static final long SUPER_BLASTING_PERIOD = 125_000_000;
+    private static final int DAMAGE = 1;
+    private static final double KI_SPEED = 13;
+    private static final int ORANGE_CAT_MAX_HP = 10;
     
     public OrangeCat(double x, double y) {
-        super(x, y, bodySize, bodySize, CAT_MAX_HP);
+        super(x, y, BODY_SIZE, BODY_SIZE, ORANGE_CAT_MAX_HP);
         this.isSuperSaiyan = false;
-        this.BLASTING_SPEED = 291_000_000;
-        this.damage = 1;
-        this.kiSpeed = 13;
+        this.blastingPeriod = START_BLASTING_PERIOD;
+        this.damage = DAMAGE;
+        this.kiSpeed = KI_SPEED;
         
         try {
             // Load sprite from resources
-            this.sprite = new Image(ImageManager.ORANGECAT_URL);
+            this.sprite = new Image(MediaManager.ORANGECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load orange cat sprite: " + e.getMessage());
         }
@@ -28,18 +32,17 @@ public class OrangeCat extends MainCharacter implements Transformable {
 	public void boom() {
     	super.boom();
 		this.isSuperSaiyan = true;
-		this.BLASTING_SPEED = 135_000_000;
-		this.moveSpeed = 6.7;
+		this.blastingPeriod = SUPER_BLASTING_PERIOD;
 		try {
             // Load sprite from resources
-			this.sprite = new Image(ImageManager.SUPERORANGECAT_URL);
+			this.sprite = new Image(MediaManager.SUPERORANGECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }
 	}
 	
 	public long getBlastingSpeed() {
-		return BLASTING_SPEED;
+		return blastingPeriod;
 	}
 	
 	@Override

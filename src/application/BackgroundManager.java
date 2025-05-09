@@ -1,118 +1,135 @@
 package application;
 
-import javafx.animation.PauseTransition;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.util.Duration;
 
 public class BackgroundManager {
 
-	private ImageView placeholderImageView;
-	private ImageView placeholderPurpleImageView;
-	private MediaPlayer superDogBackgroundPlayer;
-	private MediaPlayer ultraDogBackgroundPlayer;
+	private ImageView spacePlaceholder = Main.spacePlaceholder;
+	private ImageView greenPlaceholder = Main.greenPlaceholder;
+	private ImageView purplePlaceholder = Main.purplePlaceholder;
+	private MediaPlayer greenSkyPlayer;
+	private MediaPlayer purpleSkyPlayer;
+	private MediaPlayer spacePlayer;
 	private MediaView mediaView;
 
 	public BackgroundManager(Pane container) {
 		try {
-			Media greenSkyVideo = new Media(
-					ClassLoader.getSystemResource("resource/background/greensky.mp4").toString());
-			Media purpleSkyVideo = new Media(
-					ClassLoader.getSystemResource("resource/background/purplesky.mp4").toString());
-
-			superDogBackgroundPlayer = new MediaPlayer(greenSkyVideo);
-			ultraDogBackgroundPlayer = new MediaPlayer(purpleSkyVideo);
-
-			superDogBackgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-			ultraDogBackgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-
 			mediaView = new MediaView();
-			mediaView.fitWidthProperty().bind(container.widthProperty());
-			mediaView.fitHeightProperty().bind(container.heightProperty());
-
-			// Load placeholder image
-			Image placeholderImage = new Image(
-					ClassLoader.getSystemResource("resource/background/greensky_firstframe.png").toString());
-			placeholderImageView = new ImageView(placeholderImage);
-			placeholderImageView.fitWidthProperty().bind(container.widthProperty());
-			placeholderImageView.fitHeightProperty().bind(container.heightProperty());
-			
-			Image placeholderPurpleImage = new Image(
-					ClassLoader.getSystemResource("resource/background/purplesky_firstframe.png").toString());
-			placeholderPurpleImageView = new ImageView(placeholderPurpleImage);
-			placeholderPurpleImageView.fitWidthProperty().bind(container.widthProperty());
-			placeholderPurpleImageView.fitHeightProperty().bind(container.heightProperty());
 
 			// Add placeholder image and mediaView to container
+			container.getChildren().add(0, greenPlaceholder);  // make sure image is in front
 			container.getChildren().add(0, mediaView);
-			container.getChildren().add(0, placeholderImageView); // make sure image is in front
-			container.getChildren().add(0, placeholderPurpleImageView); // this is needed!
+			container.getChildren().add(0, purplePlaceholder);
 
 		} catch (Exception e) {
 			System.out.println("Error loading video backgrounds: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
+	
+	public BackgroundManager(Pane container, boolean isStart) {
+		try {
+			mediaView = new MediaView();
 
-	public void showSuperDogBackground() {
-		if (mediaView != null && superDogBackgroundPlayer != null) {
-			stopAllVideos();
-
-			// Show placeholder while video is loading
-			placeholderImageView.setVisible(true);
-			mediaView.setVisible(false);
-
-			mediaView.setMediaPlayer(superDogBackgroundPlayer);
-			superDogBackgroundPlayer.seek(Duration.ZERO);
-
-			superDogBackgroundPlayer.setOnReady(() -> {
-				mediaView.setVisible(true);
-				placeholderImageView.setVisible(false); // Hide placeholder when ready
-				superDogBackgroundPlayer.play();
-			});
-
-			// Optional: Also ensure placeholder hides once playback actually starts
-			superDogBackgroundPlayer.setOnPlaying(() -> {
-				placeholderImageView.setVisible(false);
-				mediaView.setVisible(true);
-			});
+			// Add placeholder image and mediaView to container
+			container.getChildren().add(0, spacePlaceholder);  // make sure image is in front
+			container.getChildren().add(0, mediaView);
+			
+			showSpace();
+			
+		} catch (Exception e) {
+			System.out.println("Error loading video backgrounds: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
+	
+	public void showSpace() {
+		disposeAllPlayers();
+		
+		// Show placeholder while video is loading
+		spacePlaceholder.setVisible(true);
+		greenPlaceholder.setVisible(false);
+		purplePlaceholder.setVisible(false);
+		mediaView.setVisible(false);
 
-	public void showUltraDogBackground() {
-	    stopAllVideos();
+		spacePlayer = new MediaPlayer(Main.spaceMedia);
+		spacePlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		
+		spacePlayer.setOnReady(() -> {
+			spacePlaceholder.setVisible(false); // Hide placeholder when ready
+			mediaView.setMediaPlayer(spacePlayer); // Set only after ready
+			mediaView.setVisible(true);
+			spacePlayer.play();
+		});
 
-	    placeholderPurpleImageView.setVisible(true);
+		spacePlayer.setOnError(() -> {
+			if(spacePlayer.getError() != null)
+				showSpace();
+	    });
+	}
+
+	public void showGreenSky() {
+		disposeAllPlayers();
+		
+		// Show placeholder while video is loading
+		greenPlaceholder.setVisible(true);
+		purplePlaceholder.setVisible(false);
+		mediaView.setVisible(false);
+
+		greenSkyPlayer = new MediaPlayer(Main.greenSkyMedia);
+		greenSkyPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		
+		greenSkyPlayer.setOnReady(() -> {
+			greenPlaceholder.setVisible(false); // Hide placeholder when ready
+			mediaView.setMediaPlayer(greenSkyPlayer); // Set only after ready
+			mediaView.setVisible(true);
+			greenSkyPlayer.play();
+		});
+
+		greenSkyPlayer.setOnError(() -> {
+			if(greenSkyPlayer.getError() != null)
+				showGreenSky();
+	    });
+	}
+
+	public void showPurpleSky() {
+	    disposeAllPlayers();
+
+	    // Show placeholder while video is loading
+	    purplePlaceholder.setVisible(true);
 	    mediaView.setVisible(false);
+	    greenPlaceholder.setVisible(false);
 
-	    // Recreate MediaPlayer to avoid caching bugs
-	    Media purpleSkyMedia = new Media(ClassLoader.getSystemResource("resource/background/purplesky.mp4").toString());
-	    ultraDogBackgroundPlayer = new MediaPlayer(purpleSkyMedia);
+	    purpleSkyPlayer = new MediaPlayer(Main.purpleSkyMedia);
+	    purpleSkyPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
 	    // Attach to MediaView after ready
-	    ultraDogBackgroundPlayer.setOnReady(() -> {
-	        mediaView.setMediaPlayer(ultraDogBackgroundPlayer); // <-- Set only after ready!
+	    purpleSkyPlayer.setOnReady(() -> {
+	    	purplePlaceholder.setVisible(false); // Hide placeholder when ready
+	        mediaView.setMediaPlayer(purpleSkyPlayer); // Set only after ready
 	        mediaView.setVisible(true);
-	        placeholderPurpleImageView.setVisible(false);
-	        ultraDogBackgroundPlayer.play();
+	        purpleSkyPlayer.play();
 	    });
 
-	    ultraDogBackgroundPlayer.setOnError(() -> {
-	        System.out.println("UltraDog video load error: " + ultraDogBackgroundPlayer.getError());
+	    purpleSkyPlayer.setOnError(() -> {
+	    	if(purpleSkyPlayer.getError() != null)
+	    		showPurpleSky();
 	    });
 	}
 
 
-	private void stopAllVideos() {
-		if (superDogBackgroundPlayer != null) {
-			superDogBackgroundPlayer.stop();
+	private void disposeAllPlayers() {
+		if (greenSkyPlayer != null) {
+			greenSkyPlayer.dispose();
 		}
-		if (ultraDogBackgroundPlayer != null) {
-			ultraDogBackgroundPlayer.stop();
+		if (purpleSkyPlayer != null) {
+			purpleSkyPlayer.dispose();
+		}
+		if (spacePlayer != null) {
+			spacePlayer.dispose();
 		}
 	}
 
@@ -131,7 +148,6 @@ public class BackgroundManager {
 	}
 
 	public void dispose() {
-		stopAllVideos();
-
+		disposeAllPlayers();
 	}
 }

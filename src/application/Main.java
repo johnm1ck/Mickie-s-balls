@@ -3,6 +3,9 @@ import gui.GameScreen;
 import gui.StartScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -11,11 +14,28 @@ public class Main extends Application {
     private Scene gameScene;
     private GameController gameController;
     private GameScreen gameScreen;
+    public static ImageView greenPlaceholder;
+    public static ImageView purplePlaceholder;
+    public static ImageView spacePlaceholder;
+    public static Media greenSkyMedia;
+    public static Media purpleSkyMedia;
+    public static Media spaceMedia;
     
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Cat vs Dogs Game");
+        
+        // load the ImageViews and MediaPlayers
+        greenPlaceholder = new ImageView(new Image(MediaManager.GREEN_SKY_FIRST_FRAME_URL));
+        greenPlaceholder.setCache(true);
+        purplePlaceholder = new ImageView(new Image(MediaManager.PURPLE_SKY_FIRST_FRAME_URL));
+        purplePlaceholder.setCache(true);
+        spacePlaceholder = new ImageView(new Image(MediaManager.SPACE_FIRST_FRAME_URL));
+        spacePlaceholder.setCache(true);
+        greenSkyMedia = new Media(MediaManager.GREEN_SKY_URL);
+        purpleSkyMedia = new Media(MediaManager.PURPLE_SKY_URL);
+        spaceMedia = new Media(MediaManager.SPACE_URL);
         
         // Initialize the start screen
         StartScreen startScreen = new StartScreen(this);
@@ -73,9 +93,11 @@ public class Main extends Application {
                 	}
                     break;
                 case Z:
+                	SoundManager.playZKiSound();
                     gameController.shootKiBlastLeft(false); // Regular special attack
                     break;
                 case X:
+                	SoundManager.playXKiSound();
                     gameController.shootKiBlastLeft(true);  // Ultimate attack
                     break;
                 case P:
@@ -111,8 +133,8 @@ public class Main extends Application {
         if (gameScreen != null) {
             gameScreen.dispose();
         }
-        
         primaryStage.setScene(startScene);
+        SoundManager.startBackgroundMusic();
     }
     
     public void exitGame() {

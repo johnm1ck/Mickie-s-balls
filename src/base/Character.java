@@ -1,5 +1,7 @@
 package base;
 
+import application.GameController;
+
 public abstract class Character extends GameObject {
     protected int maxHp;
     protected int currentHp;
@@ -21,7 +23,7 @@ public abstract class Character extends GameObject {
         if (isMovingUp && y > 0) {
             y -= moveSpeed;
         }
-        if (isMovingDown && y < 750 - height) {
+        if (isMovingDown && y < GameController.getHeight() - height) {
             y += moveSpeed;
         }
     }

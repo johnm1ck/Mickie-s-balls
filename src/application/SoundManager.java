@@ -2,7 +2,6 @@ package application;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
 
 public class SoundManager {
 
@@ -11,7 +10,13 @@ public class SoundManager {
 	private static Media boomSound;
 	private static Media hitSound;
 	private static Media bgmSound;
-
+	private static Media inGameBgmSound;
+	private static Media superBgmSound;
+	private static Media victorySound;
+	private static Media xKiSound;
+	private static Media zKiSound;
+	private static Media dogCrySound;
+	
 	private static MediaPlayer backgroundMusicPlayer;
 
 	private static boolean boomSoundPlayed = false;
@@ -19,27 +24,27 @@ public class SoundManager {
 	static {
 		try {
 			// Load media files
-			kiSound = loadMedia("resource/sound/ki.mp3");
-			deathSound = loadMedia("resource/sound/death.mp3");
-			boomSound = loadMedia("resource/sound/boom.mp3");
-			hitSound = loadMedia("resource/sound/hit.mp3");
-			bgmSound = loadMedia("resource/sound/bgm.mp3");
-
-			// Background music setup
+			bgmSound = new Media(MediaManager.BGM_URL);
+			boomSound = new Media(MediaManager.BOOM_URL);
+			deathSound = new Media(MediaManager.DEATH_URL);
+			hitSound = new Media(MediaManager.HIT_URL);
+			inGameBgmSound = new Media(MediaManager.IN_GAME_BGM_URL);
+			kiSound = new Media(MediaManager.KI_URL);
+			superBgmSound = new Media(MediaManager.SUPER_BGM_URL);
+			victorySound = new Media(MediaManager.VICTORY_URL);
+			xKiSound = new Media(MediaManager.X_KI_URL);
+			zKiSound = new Media(MediaManager.Z_KI_URL);
+			dogCrySound = new Media(MediaManager.DOG_CRY_URL);
+			
+			// initialize backgroundMusicPlayer
 			backgroundMusicPlayer = new MediaPlayer(bgmSound);
-			backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-			backgroundMusicPlayer.setVolume(0.15);
-
+			
 		} catch (Exception e) {
-			System.err.println("Error loading media files:");
+			System.err.println("Error loading media files");
 			e.printStackTrace();
 		}
 	}
-
-	private static Media loadMedia(String path) {
-		return new Media(ClassLoader.getSystemResource(path).toString());
-	}
-
+	
 	private static void playNewSound(Media sound, double volume) {
 		try {
 			if (sound == null) return;
@@ -48,23 +53,39 @@ public class SoundManager {
 			player.play();
 			player.setOnEndOfMedia(player::dispose);
 		} catch (Exception e) {
-			System.err.println("Failed to play sound.");
+			System.err.println("Failed to play sound");
 			e.printStackTrace();
 		}
 	}
 
 	// Sound triggers with volume control
 	public static void playKiSound() {
-		playNewSound(kiSound, 0.1);  // Low-power blast
+		playNewSound(kiSound, 0.16);
 	}
 
 	public static void playDeathSound() {
-		playNewSound(deathSound, 0.4);  // Louder for dramatic effect
+		playNewSound(deathSound, 0.7);
+	}
+	
+	public static void playDogCrySound() {
+		playNewSound(dogCrySound, 0.4);
+	}
+	
+	public static void playVictorySound() {
+		playNewSound(victorySound, 0.59);
+	}
+	
+	public static void playXKiSound() {
+		playNewSound(xKiSound, 0.4);
+	}
+	
+	public static void playZKiSound() {
+		playNewSound(zKiSound, 0.4);
 	}
 
 	public static void playBoomSound() {
 		if (!boomSoundPlayed) {
-			playNewSound(boomSound, 0.3);  // Medium explosion
+			playNewSound(boomSound, 0.96);
 			boomSoundPlayed = true;
 		}
 	}
@@ -74,14 +95,37 @@ public class SoundManager {
 	}
 
 	public static void playHitSound() {
-		playNewSound(hitSound, 0.08);  // Quieter impact
+		playNewSound(hitSound, 0.12);
 	}
 
 	// Background music controls
 	public static void startBackgroundMusic() {
 		if (backgroundMusicPlayer != null) {
-			backgroundMusicPlayer.seek(Duration.ZERO);
+			backgroundMusicPlayer.dispose();
+			backgroundMusicPlayer = new MediaPlayer(bgmSound);
+			backgroundMusicPlayer.setVolume(0.55);
+			backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 			backgroundMusicPlayer.play();
+		}
+	}
+	
+	public static void startInGameBackgroundMusic() {
+		if(backgroundMusicPlayer != null) {
+			backgroundMusicPlayer.dispose();
+			backgroundMusicPlayer = new MediaPlayer(inGameBgmSound);
+			backgroundMusicPlayer.setVolume(1);
+			backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+			backgroundMusicPlayer.play();
+		}
+	}
+	
+	public static void startSuperBackgroundMusic() {
+		if(backgroundMusicPlayer != null) {
+			backgroundMusicPlayer.dispose();
+			backgroundMusicPlayer = new MediaPlayer(superBgmSound);
+			backgroundMusicPlayer.setVolume(0.36);
+			backgroundMusicPlayer.play();
+			backgroundMusicPlayer.setOnEndOfMedia(() -> startInGameBackgroundMusic());
 		}
 	}
 

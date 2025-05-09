@@ -8,12 +8,12 @@ public abstract class MainCharacter extends Character {
 	protected boolean isSuperSaiyan;
 	protected int damage;
 	protected double kiSpeed;
-	private static final double startBodySize = 69;
-	private static final double bigBodySize = 79;
-	protected static double bodySize = startBodySize;
+	private static final double START_SPEED = 5.3;
+	private static final double SUPER_SPEED = 6.7;
+	protected static final double BODY_SIZE = 69;
     
     public MainCharacter(double x, double y, double width, double height, int maxHp) {
-        super(x, y, width, height, maxHp, 5.0);
+        super(x, y, width, height, maxHp, START_SPEED);
     }
     
     // Right direction
@@ -55,17 +55,11 @@ public abstract class MainCharacter extends Character {
     	return isSuperSaiyan;
     }
     
-    public static double getStartbodysize() {
-		return startBodySize;
-	}
-	public static double getBigbodysize() {
-		return bigBodySize;
-	}
 	public static double getBodySize() {
-		return bodySize;
+		return BODY_SIZE;
 	}
 	public void boom() {
-    	MainCharacter.bodySize = bigBodySize;
+    	this.moveSpeed = SUPER_SPEED;
     }
     
     

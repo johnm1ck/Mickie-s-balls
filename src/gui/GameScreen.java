@@ -60,12 +60,11 @@ public class GameScreen extends BorderPane {
 	        
 	        // Add game area to the center of the border pane
 	        this.setCenter(gameArea);
-	        
 	        // Set initial background based on current enemy
 	        if (gameController.getCurrentEnemy() instanceof UltraDog) {
-	            backgroundManager.showUltraDogBackground();
+	        	backgroundManager.showPurpleSky();
 	        } else {
-	            backgroundManager.showSuperDogBackground();
+	        	backgroundManager.showGreenSky();
 	        }
 	        
 	        // Start render loop
@@ -87,9 +86,9 @@ public class GameScreen extends BorderPane {
 	                    
 	                    if (lastEnemyType != currentEnemyType) {
 	                        if (currentEnemyType == UltraDog.class) {
-	                            backgroundManager.showUltraDogBackground();
+	                            backgroundManager.showPurpleSky();
 	                        } else if (currentEnemyType == SuperDog.class) {
-	                            backgroundManager.showSuperDogBackground();
+	                            backgroundManager.showGreenSky();
 	                        }
 	                        lastEnemyType = currentEnemyType;
 	                    }
@@ -107,7 +106,6 @@ public class GameScreen extends BorderPane {
 	                updateOverlays();
 	            }
 	        };
-	        
 	        renderTimer.start();
 	    }
     
@@ -156,30 +154,30 @@ public class GameScreen extends BorderPane {
             
             // Title
             Text title = new Text("GAME PAUSED");
-            title.setFont(new Font(28));
-            title.setFill(Color.WHITE);
+            title.setFont(new Font("Comic Sans MS", 28));
+            title.setFill(Color.FLORALWHITE);
             
             // Controls info
             VBox controlsBox = new VBox(10);
             controlsBox.setAlignment(Pos.CENTER_LEFT);
             
             Text controlsTitle = new Text("Controls:");
-            controlsTitle.setFont(new Font(20));
-            controlsTitle.setFill(Color.WHITE);
+            controlsTitle.setFont(new Font("Comic Sans MS", 20));
+            controlsTitle.setFill(Color.FLORALWHITE);
             
             Text[] controls = {
                 new Text("W/Up Arrow: Move Up"),
                 new Text("S/Down Arrow: Move Down"),
-                new Text("Space: Shoot Ki Blast (Right)"),
+                new Text("Space: Shoot Ki Blast (Auto for Orange Cat)"),
                 new Text("Z: Special Attack (Left, 10 points)"),
-                new Text("X: Ultimate Attack (Left, requires enemy's max HP points)"),
+                new Text("X: Ultimate Attack (Left, requires enemy's current HP points)"),
                 new Text("P: Pause/Resume Game"),
                 new Text("ESC: Return to Main Menu")
             };
             
             for (Text control : controls) {
-                control.setFill(Color.WHITE);
-                control.setFont(new Font(16));
+                control.setFill(Color.FLORALWHITE);
+                control.setFont(new Font("Comic Sans MS", 16));
             }
             
             controlsBox.getChildren().add(controlsTitle);
@@ -188,6 +186,8 @@ public class GameScreen extends BorderPane {
             // Resume button
             Button resumeButton = new Button("Resume Game");
             resumeButton.setPrefWidth(200);
+            resumeButton.setStyle("-fx-font: 17px 'Impact'; -fx-padding: 10; -fx-text-fill: floralwhite;"
+            		+ "-fx-background-radius: 10; -fx-background-color: cadetblue;");
             resumeButton.setOnAction(e -> gameController.togglePause());
             
             // Add components to the pause menu
@@ -206,34 +206,34 @@ public class GameScreen extends BorderPane {
             this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-background-radius: 10;");
             
             // Title
-            Text title = new Text("GAME OVER");
-            title.setFont(new Font(32));
-            title.setFill(Color.RED);
-            
-            // Score display
-            Text scoreText = new Text();
-            scoreText.setFont(new Font(20));
-            scoreText.setFill(Color.WHITE);
-            
-            
+            Text title = new Text("Catto is gone\n");
+            //title.setFont(new Font("Comic Sans MS Bold", 32));
+            //title.setFill(Color.RED);
+            title.setStyle("-fx-font: 43px 'Impact';"
+            		+ "-fx-fill: crimson;");
+    
             // Buttons
             HBox buttonBox = new HBox(20);
             buttonBox.setAlignment(Pos.CENTER);
             
             Button retryButton = new Button("Try Again");
             retryButton.setPrefWidth(150);
+            retryButton.setStyle("-fx-font: 20px 'Impact'; -fx-padding: 10; -fx-text-fill: floralwhite;"
+            		+ "-fx-background-radius: 10; -fx-background-color: cadetblue;");
             retryButton.setOnAction(e -> {
                 // Start a new game with the same character type
                 main.startNewGame(gameController.getCharacterType());
             });
             Button mainMenuButton = new Button("Main Menu");
             mainMenuButton.setPrefWidth(150);
+            mainMenuButton.setStyle("-fx-font: 20px 'Impact'; -fx-padding: 10; -fx-text-fill: floralwhite;"
+            		+ "-fx-background-radius: 10; -fx-background-color: darkred;");
             mainMenuButton.setOnAction(e -> main.returnToStartScreen());
             
             buttonBox.getChildren().addAll(retryButton, mainMenuButton);
             
             // Add components to the game over screen
-            this.getChildren().addAll(title, scoreText, buttonBox);
+            this.getChildren().addAll(title, buttonBox);
         }
     }
     
@@ -248,14 +248,11 @@ public class GameScreen extends BorderPane {
             this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-background-radius: 10;");
             
             // Title
-            Text title = new Text("VICTORY!");
-            title.setFont(new Font(32));
-            title.setFill(Color.GOLD);
-            
-            // Score display
-            Text scoreText = new Text();
-            scoreText.setFont(new Font(20));
-            scoreText.setFill(Color.WHITE);
+            Text title = new Text("Catto wins !\n");
+            //title.setFont(new Font("Comic Sans MS Bold", 32));
+            //title.setFill(Color.GOLD);
+            title.setStyle("-fx-font: 43px 'Impact';"
+            		+ "-fx-fill: goldenrod;");
             
             // Buttons
             HBox buttonBox = new HBox(20);
@@ -263,6 +260,8 @@ public class GameScreen extends BorderPane {
             
             Button playAgainButton = new Button("Play Again");
             playAgainButton.setPrefWidth(150);
+            playAgainButton.setStyle("-fx-font: 20px 'Impact'; -fx-padding: 10; -fx-text-fill: floralwhite;"
+            		+ "-fx-background-radius: 10; -fx-background-color: cadetblue;");
             playAgainButton.setOnAction(e -> {
                 // Start a new game with the same character type
                 main.startNewGame(gameController.getCharacterType());
@@ -270,11 +269,13 @@ public class GameScreen extends BorderPane {
             
             Button mainMenuButton = new Button("Main Menu");
             mainMenuButton.setPrefWidth(150);
+            mainMenuButton.setStyle("-fx-font: 20px 'Impact'; -fx-padding: 10; -fx-text-fill: floralwhite;"
+            		+ "-fx-background-radius: 10; -fx-background-color: darkred;");
             mainMenuButton.setOnAction(e -> main.returnToStartScreen());
             buttonBox.getChildren().addAll(playAgainButton, mainMenuButton);
             
             // Add components to the victory screen
-            this.getChildren().addAll(title, scoreText, buttonBox);
+            this.getChildren().addAll(title, buttonBox);
         }
     }
     

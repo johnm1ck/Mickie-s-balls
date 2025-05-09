@@ -1,23 +1,28 @@
 package model;
 
-import application.ImageManager;
+import application.MediaManager;
 import application.SoundManager;
 import base.BlasterState;
 import base.MainCharacter;
 import base.Transformable;
 import javafx.scene.image.Image;
 
-public class WhiteCat extends MainCharacter implements Transformable {
-    private static final int CAT_MAX_HP = 10;    
+public class WhiteCat extends MainCharacter implements Transformable { 
+	private static final int WHITE_CAT_MAX_HP = 10;
+	private static final int NORMAL_DAMAGE = 1;
+	private static final int SUPER_DAMAGE = 2;
+	private static final int NORMAL_KI_SPEED = 13;
+	private static final int SUPER_KI_SPEED = 19;
+	
     public WhiteCat(double x, double y) {
-        super(x, y, bodySize, bodySize, CAT_MAX_HP);
+        super(x, y, BODY_SIZE, BODY_SIZE, WHITE_CAT_MAX_HP);
         this.isSuperSaiyan = false;
-        this.damage = 1;
-        this.kiSpeed = 13;
+        this.damage = NORMAL_DAMAGE;
+        this.kiSpeed = NORMAL_KI_SPEED;
         
         try {
             // Load sprite from resources
-            this.sprite = new Image(ImageManager.WHITECAT_URL);
+            this.sprite = new Image(MediaManager.WHITECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }
@@ -36,12 +41,11 @@ public class WhiteCat extends MainCharacter implements Transformable {
     public void boom() {
     	super.boom();
 		this.isSuperSaiyan = true;
-		this.damage = 2;
-		this.kiSpeed = 19;
-		this.moveSpeed = 6.7;
+		this.damage = SUPER_DAMAGE;
+		this.kiSpeed = SUPER_KI_SPEED;
 		try {
             // Load sprite from resources
-			this.sprite = new Image(ImageManager.SUPERWHITECAT_URL);
+			this.sprite = new Image(MediaManager.SUPERWHITECAT_URL);
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }

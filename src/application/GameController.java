@@ -11,6 +11,7 @@ import base.Obstacle;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import model.*;
 
 public class GameController {
@@ -37,8 +38,10 @@ public class GameController {
 	// Track if super saiyan transformation has occurred
 	// private boolean superSaiyanTransformed = false;
 
-	private final static double height = 750;
-	private final static double width = 1500;
+	private final static double HEIGHT = 750;
+	private final static double WIDTH = 1500;
+	private final static long OBSTACLE_PERIOD = 710_000_000;
+	private final static long SUPER_OBSTACLE_PERIOD = 190_000_000;
 
 	public GameController(String characterType) {
 		this.characterType = characterType;
@@ -59,19 +62,19 @@ public class GameController {
 	private void initializeEntities() {
 		// Create main character based on selection
 		if (characterType.equals("orange")) {
-			mainCharacter = new OrangeCat(width / 2, height / 2);
+			mainCharacter = new OrangeCat(WIDTH / 2, HEIGHT / 2);
 		} else {
-			mainCharacter = new WhiteCat(width / 2, height / 2);
+			mainCharacter = new WhiteCat(WIDTH / 2, HEIGHT / 2);
 		}
 
 		// Create initial enemy (Super Dog)
-		currentEnemy = new SuperDog(100, height / 2);
+		currentEnemy = new SuperDog(100, HEIGHT / 2);
 
 		lastObstacleTime = 0;
 		lastEnemyAttackTime = 0;
 		lastAutomaticBlastTime = 0;
 		lastEnemyMoveTime = 0;
-		obstaclePeriod = 790_000_000;
+		obstaclePeriod = OBSTACLE_PERIOD;
 		enemyMovingUp = random.nextBoolean();
 
 		// Reset super saiyan transformation flag
@@ -88,7 +91,7 @@ public class GameController {
 			gameWon = false;
 
 			// Start background music
-			SoundManager.startBackgroundMusic();
+			SoundManager.startInGameBackgroundMusic();
 
 			gameLoop = new AnimationTimer() {
 				@Override
@@ -165,12 +168,13 @@ public class GameController {
 		if (currentEnemy == null)
 			return;
 		
-		  if (now - lastEnemyMoveTime > 500_000_000) {  // Reduced interval from 1.69s to 0.5s
-		        lastEnemyMoveTime = now;
-		        if (random.nextInt(100) <= 70) {  // 43% chance to change direction
-		            enemyMovingUp = !enemyMovingUp;
-		        }
-		    }
+		// 41% chance to change direction every 0.5 seconds
+		if (now - lastEnemyMoveTime > 500_000_000) {
+			lastEnemyMoveTime = now;
+			if (random.nextInt(100) < 41) {  
+				enemyMovingUp = !enemyMovingUp;
+			}
+		}
 
 		// Move enemy
 		if (enemyMovingUp) {
@@ -178,13 +182,15 @@ public class GameController {
 			// Keep enemy on screen
 			if (currentEnemy.getY() < 50) {
 				enemyMovingUp = false;
+				lastEnemyMoveTime = now;
 				currentEnemy.moveDown();
 			}
 		} else {
 			currentEnemy.moveDown();
 			// Keep enemy on screen
-			if (currentEnemy.getY() > height - 50) {
+			if (currentEnemy.getY() > HEIGHT - 50) {
 				enemyMovingUp = true;
+				lastEnemyMoveTime = now;
 				currentEnemy.moveUp();
 			}
 		}
@@ -198,21 +204,28 @@ public class GameController {
 	}
 
 	private void spawnRandomObstacle() {
-		int type = random.nextInt(3); // 0, 1, or 2
+		int type = random.nextInt(5);
 		Obstacle obstacle;
-
+		
+		// 3 in 5 chance to spawn stone; 1 in 5 chance to spawn puppy or big dog
 		switch (type) {
 		case 0:
-			obstacle = new Stone(width, 50 + random.nextInt((int) height - 100));
+			obstacle = new Stone(WIDTH, 50 + random.nextInt((int) HEIGHT - 100));
 			break;
 		case 1:
-			obstacle = new Puppy(width, 50 + random.nextInt((int) height - 100));
+			obstacle = new Puppy(WIDTH, 50 + random.nextInt((int) HEIGHT - 100));
 			break;
 		case 2:
-			obstacle = new BigDog(width, 50 + random.nextInt((int) height - 100));
+			obstacle = new BigDog(WIDTH, 50 + random.nextInt((int) HEIGHT - 100));
+			break;
+		case 3:
+			obstacle = new Stone(WIDTH, 50 + random.nextInt((int) HEIGHT - 100));
+			break;
+		case 4:
+			obstacle = new Stone(WIDTH, 50 + random.nextInt((int) HEIGHT - 100));
 			break;
 		default:
-			obstacle = new Stone(width, 50 + random.nextInt((int) height - 100));
+			obstacle = new Stone(WIDTH, 50 + random.nextInt((int) HEIGHT - 100));
 		}
 
 		obstacles.add(obstacle);
@@ -248,7 +261,7 @@ public class GameController {
 			blast.update();
 
 			// Remove blasts that are off-screen
-			if (blast.getX() > width || blast.getX() < 0) {
+			if (blast.getX() > WIDTH || blast.getX() < 0) {
 				playerBlastIterator.remove();
 			}
 		}
@@ -260,7 +273,7 @@ public class GameController {
 			blast.update();
 
 			// Remove blasts that are off-screen
-			if (blast.getX() > width || blast.getX() < 0) {
+			if (blast.getX() > WIDTH || blast.getX() < 0) {
 				enemyBlastIterator.remove();
 			}
 		}
@@ -287,6 +300,10 @@ public class GameController {
 						// Check if obstacle is destroyed
 						if (obstacle.isDestroyed()) {
 							score += obstacle.getPoints();
+							if (obstacle instanceof Puppy ||
+								obstacle instanceof BigDog) {
+								SoundManager.playDogCrySound();
+							}
 							// 25% chance to heal after destroying obstacle
 							int toHeal = random.nextInt(4);
 							if (toHeal == 1)
@@ -300,7 +317,6 @@ public class GameController {
 			} else if (currentEnemy != null) { // Left-moving blasts check against enemy
 				if (blast.intersects(currentEnemy)) {
 					// Special attack logic
-
 					currentEnemy.takeDamage(blast.getDamage());
 					playerBlastIterator.remove();
 
@@ -311,19 +327,20 @@ public class GameController {
 						// Change to Ultra Dog after defeating Super Dog
 						if (enemiesDefeated == 1) {
 							((SuperDog) currentEnemy).boom();
-
+							SoundManager.startSuperBackgroundMusic();
 							// Only transform main character if not already transformed
 							if (!mainCharacter.isSuperSaiyan()) {
 								mainCharacter.boom();
 								SoundManager.playBoomSound();
 							}
 
-							obstaclePeriod = 190_000_000;
+							obstaclePeriod = SUPER_OBSTACLE_PERIOD;
 							currentEnemy = new UltraDog(currentEnemy.getX(), currentEnemy.getY());
 						} else {
 							// Game victory condition
 							currentEnemy = null;
 							gameWon = true;
+							SoundManager.playVictorySound();
 						}
 					}
 				}
@@ -385,7 +402,7 @@ public class GameController {
 
 	public void shootKiBlastLeft(boolean ultimate) {
 		if (mainCharacter != null && currentEnemy != null) {
-			int requiredPoints = ultimate ? currentEnemy.getMaxHp() : 10;
+			int requiredPoints = ultimate ? currentEnemy.getCurrentHp() : 10;
 
 			if (score >= requiredPoints) {
 				KiBlast blast = mainCharacter.shootKiBlast(ultimate);
@@ -429,14 +446,15 @@ public class GameController {
 		}
 
 		// Render score and enemy HP
-		gc.setFill(Color.WHITE);
-		gc.setStroke(Color.BLACK);
+		gc.setFont(new Font("Comic Sans MS", 20));
+		gc.setFill(Color.FLORALWHITE);
+		gc.setStroke(Color.rgb(69, 47, 7));
 		gc.setLineWidth(2);
 
 		// Draw text with outline for better visibility
 		String scoreText = "Score: " + score;
-		gc.strokeText(scoreText, width - 140, 30);
-		gc.fillText(scoreText, width - 140, 30);
+		gc.strokeText(scoreText, WIDTH - 140, 30);
+		gc.fillText(scoreText, WIDTH - 140, 30);
 
 		if (currentEnemy != null) {
 			String enemyHpText = "Enemy HP: " + currentEnemy.getCurrentHp() + "/" + currentEnemy.getMaxHp();
@@ -471,11 +489,11 @@ public class GameController {
 	}
 
 	public static double getHeight() {
-		return height;
+		return HEIGHT;
 	}
 
 	public static double getWidth() {
-		return width;
+		return WIDTH;
 	}
 	public void setScore(int score) {
 		this.score = score;
