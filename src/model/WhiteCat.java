@@ -1,8 +1,6 @@
 package model;
 
 import application.MediaManager;
-import application.SoundManager;
-import base.BlasterState;
 import base.MainCharacter;
 import base.Transformable;
 import javafx.scene.image.Image;
@@ -26,15 +24,6 @@ public class WhiteCat extends MainCharacter implements Transformable {
         } catch (Exception e) {
             System.out.println("Could not load white cat sprite: " + e.getMessage());
         }
-    }
-    
-    // Right direction
-    @Override
-    public KiBlast shootKiBlast(int damage, double speed) {
-    	SoundManager.playKiSound();
-
-    	BlasterState s = this.isSuperSaiyan ? BlasterState.SUPER_MAIN : BlasterState.NORM_MAIN;
-        return new KiBlast(x + width, y + height/2, 1, damage, speed, s);
     }
 
     @Override

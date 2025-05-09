@@ -25,7 +25,11 @@ public abstract class MainCharacter extends Character {
     
     // Left direction
     public KiBlast shootKiBlast(boolean ultimate) {
-    	SoundManager.playKiSound();
+    	if (ultimate) {
+    		SoundManager.playXKiSound();
+    	} else {
+    		SoundManager.playZKiSound();
+    	}
     	BlasterState s = this.isSuperSaiyan ? BlasterState.SUPER_MAIN : BlasterState.NORM_MAIN;
         return new KiBlast(x, y + height/2, -1, s, ultimate);  
     }

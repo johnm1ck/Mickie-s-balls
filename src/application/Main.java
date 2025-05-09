@@ -94,11 +94,9 @@ public class Main extends Application {
                 	}
                     break;
                 case Z:
-                	SoundManager.playZKiSound();
                     gameController.shootKiBlastLeft(false); // Regular special attack
                     break;
                 case X:
-                	SoundManager.playXKiSound();
                     gameController.shootKiBlastLeft(true);  // Ultimate attack
                     break;
                 case P:
